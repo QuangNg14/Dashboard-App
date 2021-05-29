@@ -26,8 +26,6 @@ import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import DrawerContainer from "./src/screens/DrawerContainer"
-import * as RootNavigation from "./src/RootNavigation";
-import LottieView from 'lottie-react-native';
 
 import {
   Provider as PaperProvider,
@@ -414,7 +412,7 @@ export default function App({ navigation }) {
   if (authState.isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-         <LottieView source={require("./assets/41484-running-stats.json")} autoPlay loop/>
+        <ActivityIndicator size="large" style={{ marginTop: 200 }} />
       </View>
     )
   }

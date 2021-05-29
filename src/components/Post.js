@@ -138,7 +138,8 @@ const Post = (props) => {
                         <Text style={{ fontWeight: "bold", fontSize: Platform.OS === "ios" ? 14 : 12 }}>{name}</Text>
                     </View>
                     <View style={{ width: "100%", height: "50%", fontSize: Platform.OS === "ios" ? 14 : 12 }}>
-                        <Text>{type} at {curHour}:{curMinute} {Platform.OS === "ios" ? `at ${curAddress && curAddress.name} in ${curAddress && curAddress.city}`: null}</Text>
+                        <Text>{type} at {curHour}:{curMinute} {Platform.OS === "ios" ? `at ${curAddress && curAddress.name} 
+                        in ${curAddress && curAddress.city}`: `at ${curAddress ? curAddress.street : null}`}</Text>
                     </View>
                 </View>
                 <View style={{

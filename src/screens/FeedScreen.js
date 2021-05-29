@@ -17,18 +17,6 @@ const FeedScreen = ({navigation}) => {
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        (async () => {
-          if (Platform.OS === 'android' && !Constants.isDevice) {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-              setErrorMsg('Permission to access location was denied');
-              return;
-            }
-          }
-        })();
-      }, []);
-
-    useEffect(() => {
         fetchPosts()
     }, [isFocused]) 
 
