@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "track-client",
-    "slug": "track-client",
-    "version": "1.0.0",
+    "name": "Dashboard",
+    "slug": "Dashboard",
+    "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/LogoDashboard.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/dashboard-2.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,13 +17,37 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow Expo experiences to use your camera",
+        "NSLocationWhenInUseUsageDescription": "Allow Expo experiences to use your location when in app", 
+        "NSLocationAlwaysUsageDescription": "Allow Expo experiences to use your location all the time",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow Expo experiences to use your location both in app and all the time",
+        "NSPhotoLibraryUsageDescription": "Give Expo experiences permission to access your photos",
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
+      },
+      "bundleIdentifier": "com.quangnguyen140102app.dashboard",
+      "buildNumber": "1.7.0"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/LogoDashboard.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "versionCode": 3,
+      "permissions": [
+        "CAMERA",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE"
+      ],
+      "package": "com.quangnguyen140102app.dashboard"
     },
     "web": {
       "favicon": "./assets/favicon.png"
