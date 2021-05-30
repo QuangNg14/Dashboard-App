@@ -10,6 +10,9 @@ import useLocation from '../hooks/useLocation';
 import { useIsFocused } from '@react-navigation/native';
 import TrackForm from '../components/TrackForm';
 import * as Location from "expo-location"
+import Modal from 'react-native-modal';
+import { EvilIcons, FontAwesome5 } from '@expo/vector-icons';
+import * as Permissions from 'expo-permissions';
 
 const TrackCreateScreen = ({ navigation, navigator }) => {
     //trackCreateScreen = 2 components Map + TrackForm
@@ -22,18 +25,47 @@ const TrackCreateScreen = ({ navigation, navigator }) => {
     const callback = useCallback(location => {
         addLocation(location, isRecording)
     }, [isRecording]) //only run when state.isRecording changes
-    //addLocation có 2 parameter location và isRecording 
-
+    // const [isModalVisible, setModalVisible] = useState(false)
+    // const [permission, setPermission] = useState(null)
+    // const [agree, setAgree] = useState(false)
     const [err] = useLocation(isFocused, isRecording, callback)
-    //đang ở trong màn hình trackCreate or đang recording thì luôn call useLocation
-    //useLocation là function để track liên tục location hiện tại
+    
+    // useEffect(() => {
+    //     const getPermission = async () => {
+    //       const permission = await Location.getPermissionsAsync()
+    //       setPermission(permission)
+    //     }
+    //     getPermission()
+    //   }, [])
+
+    // useEffect(() => {
+    //     const reqPermission = async () => {
+    //       if (!permission) {
+    //         setModalVisible(true)
+    //       }
+    //       if(agree){
+    //           const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+    //           if (status !== 'granted') {
+    //             alert('We are using your location for the best experience in the application. Please turn on location services for the application');
+    //             throw new Error('Location permission not granted');
+    //           }
+    //           setStatus(status)
+    //       }
+    //     }
+    //     reqPermission()
+    //   }, [])
+
+    // const handleOutModal = () => {
+    //     setModalVisible(false)
+    //     setAgree(true)
+    // }
 
     return (
         // <SafeAreaView forceInset={{top: "always"}}>
         <View style={styles.container}>
             <Map />
             {err ? <Text>Please enable location services</Text> : null}
-            <TrackForm navigation={navigation}/>
+            <TrackForm navigation={navigation} />
         </View>
         // </SafeAreaView>
     )

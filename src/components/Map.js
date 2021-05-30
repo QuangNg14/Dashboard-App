@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useContext } from 'react';
-import {FlatList, Image } from 'react-native';
+import { FlatList, Image } from 'react-native';
 import { ActivityIndicator, StyleSheet, View } from "react-native"
 import { Text } from "react-native-elements"
 import MapView, { Polyline, Circle, Marker, Callout, Animated } from 'react-native-maps';
@@ -9,49 +9,39 @@ import { Context as LocationContext } from '../context/LocationContext';
 import * as Location from "expo-location"
 import * as Permissions from 'expo-permissions';
 import { useIsFocused } from '@react-navigation/core';
+import Modal from 'react-native-modal';
+import { EvilIcons, FontAwesome5 } from '@expo/vector-icons';
+import { Button } from 'react-native';
 
 const Map = () => {
   const { state: { currentLocation, locations, isRecording,
     markedLocations, markedLocationsAddresses } } = useContext(LocationContext)
-    const [errorMsg, setErrorMsg] = useState(null);
-    const [location, setLocation] = useState(null)
-    const [permission, setPermission] = useState(null)
-    const [status, setStatus] = useState("")
-    const isFocused = useIsFocused()
-
-  useEffect(() => {
-    const reqPermission = async () => {
-      const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-          alert('We are using your location for the best experience in the application. Please turn on location services for the application');
-          throw new Error('Location permission not granted');
-      }
-      setStatus(status)
-    }
-    reqPermission()
-  }, [])
+  const [location, setLocation] = useState(null)
+  const [permission, setPermission] = useState(null)
+  const [status, setStatus] = useState("")
+  const [isModalVisible, setModalVisible] = useState(false)
+  const isFocused = useIsFocused()
+  const [followsUserLocation, setFollowsUserLocation] = useState(false)
 
   useEffect(() => {
     const getPermission = async () => {
       const permission = await Location.getPermissionsAsync()
       setPermission(permission)
     }
-    if(status){
+    if (status) {
       getPermission()
     }
   }, [status])
 
   useEffect(() => {
-    if(permission){
-      console.log(permission)
-      if(permission.status === "granted"){
+    if (permission) {
+      if (permission.status === "granted") {
         const getCurrentLocation = async () => {
           let location = await Location.getCurrentPositionAsync({
             maxAge: 5000,
             requiredAccuracy: 100,
             accuracy: Location.Accuracy.Balanced
           });
-          console.log(location)
           setLocation(location);
         }
         getCurrentLocation()
@@ -59,62 +49,138 @@ const Map = () => {
     }
   }, [permission, isFocused]);
 
+  useEffect(() => {
+    const reqPermission = async () => {
+      const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== 'granted') {
+        alert('We are using your location for the best experience in the application. Please turn on location services for the application');
+        throw new Error('Location permission not granted');
+      }
+      setStatus(status)
+    }
+    reqPermission()
+  }, [])
+
   if (!location) {
     return <ActivityIndicator size="large" style={{ marginTop: 200 }} />
   }
 
   return (
-    <MapView
-      style={{height: isRecording ? "50%" : "80%"}}
-      initialRegion={location ? {
-        ...location.coords,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      } : {
-          latitude: 37.33233141,
-          longitude: -122.0312186,
-          latitudeDelta: 0.005,
-          longitudeDelta: 0.005,
-        }}
-      region={location ? {
-        ...location.coords,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      }: {
-        latitude: 37.33233141,
-        longitude: -122.0312186,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      }}
-      showsUserLocation={true}
-      followUserLocation = {true}
-    >
-
-      <Polyline
-        coordinates={locations.map((location) => location.coords)}
-        strokeWidth={5}
-        strokeColor="rgb(255, 111, 97)"
-        fillColor="rgb(255, 111, 97)"
-        zIndex={-1}
-      />
-      
-      {markedLocations && markedLocations.map((location, key) => (
-        <Marker
-        coordinate={{
-          ...location.coords
-        }}
-        title={`Location ${key + 1}: This place's address is`}
-        description={markedLocationsAddresses[key]}
-        key={key}
+      <View style={{ flex: 1 }}>
+        <MapView
+          style={{ height: isRecording ? "50%" : "80%", flex: 1 }}
+          initialRegion={location ? {
+            ...location.coords,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          } : {
+            latitude: 37.33233141,
+            longitude: -122.0312186,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          }}
+          region={currentLocation ? {
+            ...currentLocation.coords,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          } : {
+            latitude: 37.33233141,
+            longitude: -122.0312186,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          }}
+          showsUserLocation={true}
+          followsUserLocation={followsUserLocation}
         >
+          {locations ? (
+            <Polyline
+              coordinates={locations.map((location) => location.coords)}
+              strokeWidth={5}
+              strokeColor="rgb(255, 111, 97)"
+              fillColor="rgb(255, 111, 97)"
+              zIndex={-1}
+            />
+          ) : null}
+
+          {/* {locations && locations.map((location, key) => (
+            <Marker
+              coordinate={{
+                ...location.coords
+              }}
+              title={`Location ${key + 1}: This place's address is`}
+              description={`${location.coords.latitude} ${location.coords.longitude}`}
+              key={key}
+            >
               <Image source={require("../../assets/map-marker.png")}
                 style={{ width: 40, height: 40 }}
                 resizeMode="center"
                 resizeMethod="resize"
               />
             </Marker>
-            ))}
-    </MapView>
+          ))} */}
+
+          {markedLocations && markedLocations.map((location, key) => (
+            <Marker
+              coordinate={{
+                ...location.coords
+              }}
+              title={`Location ${key + 1}: This place's address is`}
+              description={markedLocationsAddresses[key]}
+              key={key}
+            >
+              <Image source={require("../../assets/map-marker.png")}
+                style={{ width: 40, height: 40 }}
+                resizeMode="center"
+                resizeMethod="resize"
+              />
+            </Marker>
+          ))}
+        </MapView>
+
+        <View
+          style={{
+            position: 'absolute',//use absolute position to show button on top of the map
+            bottom: '7%', //for center align
+            alignSelf: 'flex-end', //for align to right
+            right: '3%'
+          }}
+        >
+          <FontAwesome5 name="search-location" size={24} color="black" 
+          onPress={() => setFollowsUserLocation(!followsUserLocation)} />
+        </View>
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+          style={{
+            display: "flex", justifyContent: "center",
+            alignItems: "center"
+          }}>
+          <View style={{
+            backgroundColor: "white", width: "100%",
+            height: "40%", flexDirection: "column"
+          }}>
+            <View style={{ height: "100%", width: "100%" }}>
+              <View style={{ height: "15%", width: "100%", justifyContent: "center", alignItems: "center", marginTop: 20 }}>
+                <EvilIcons name="location" size={50} color="black" />
+              </View>
+              <View style={{ height: "20%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>Use Your Location</Text>
+              </View>
+
+              <View style={{ height: "20%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontSize: 15 }}>This app collects location data to see maps for automatically tracked activities even when the app is closed or not in use.</Text>
+              </View>
+
+              <View style={{ height: "20%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontSize: 15 }}>Dashboard will use location in the background to show runs, walks, cycles, or bike rides in a map</Text>
+              </View>
+              <View style={{ height: "20%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                <Button title="Next" onPress={() => setModalVisible(false)} />
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
   )
 }
 

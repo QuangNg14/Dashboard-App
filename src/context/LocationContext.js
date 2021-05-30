@@ -56,7 +56,7 @@ const locationReducer = (prevState, action) => {
             return {
                 ...prevState,
                 markedLocations: [...prevState.markedLocations, action.payload.location],
-                markedLocationsAddresses: [...prevState.markedLocationsAddresses, action.payload.address]
+                markedLocationsAddresses: [...prevState.markedLocationsAddresses, `${action.payload.address.name} ${action.payload.address.street} ${action.payload.address.subregion}` ]
             }
         case "add_speed":
             return {
@@ -114,8 +114,19 @@ const locationReducer = (prevState, action) => {
                 commute: action.payload.commute,
                 image: action.payload.image,
             }
+        case "reset_locations":
+            return {
+                ...prevState,
+                locations: []
+            }
         default:
             return prevState;
+    }
+}
+
+const resetLocations = (dispatch) => {
+    return () => {
+        dispatch({type:"reset_locations"})
     }
 }
 
@@ -193,7 +204,8 @@ const reset = (dispatch) => {
 export const {Context, Provider} = createDataContext(
     locationReducer,
     {startRecording, stopRecording, addLocation, updateTrackName, 
-        addMarkedLocation, reset, getAverageSpeed, getTotalDistanceTravelled, updateTime, updateExtraInfo},
+        addMarkedLocation, reset, getAverageSpeed, 
+        getTotalDistanceTravelled, updateTime, updateExtraInfo, resetLocations},
     initialState
 )
 

@@ -126,11 +126,11 @@ const CustomTrackScreen = ({ route, navigation }) => {
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
-        region={{
-          ...initialLocation,
-          latitudeDelta: 0.005,
-          longitudeDelta: 0.005,
-        }}
+        // region={{
+        //   ...initialLocation,
+        //   latitudeDelta: 0.005,
+        //   longitudeDelta: 0.005,
+        // }}
       >
         <Polyline
           coordinates={locations.map(t => t.coords)}

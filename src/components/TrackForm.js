@@ -6,6 +6,7 @@ import useSaveTracks from '../hooks/useSaveTracks';
 import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { reverseGeocodeAPI } from '../api/googleReverseGeocoding';
 import TimerUp from './TimerUp';
+import * as Location from "expo-location"
 
 
 const TrackForm = ({navigation}) => {
@@ -68,10 +69,11 @@ const TrackForm = ({navigation}) => {
   }, [second, isRecording])
 
   const handleMarkedLocation = async () => {
-    let latitude = currentLocation.coords.latitude
-    let longitude = currentLocation.coords.longitude
-    const res = await reverseGeocodeAPI(`${latitude}, ${longitude}`)
-    addMarkedLocation(currentLocation, res)
+    let latitude = currentLocation && currentLocation.coords.latitude
+    let longitude = currentLocation && currentLocation.coords.longitude
+    const res = await Location.reverseGeocodeAsync({latitude: latitude, longitude: longitude})
+    console.log(res)
+    addMarkedLocation(currentLocation, res[0])
   }
 
   useEffect(() => {
