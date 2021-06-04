@@ -29,36 +29,6 @@ const TrackCreateScreen = ({ navigation, navigator }) => {
     // const [permission, setPermission] = useState(null)
     // const [agree, setAgree] = useState(false)
     const [err] = useLocation(isFocused, isRecording, callback)
-    
-    // useEffect(() => {
-    //     const getPermission = async () => {
-    //       const permission = await Location.getPermissionsAsync()
-    //       setPermission(permission)
-    //     }
-    //     getPermission()
-    //   }, [])
-
-    // useEffect(() => {
-    //     const reqPermission = async () => {
-    //       if (!permission) {
-    //         setModalVisible(true)
-    //       }
-    //       if(agree){
-    //           const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
-    //           if (status !== 'granted') {
-    //             alert('We are using your location for the best experience in the application. Please turn on location services for the application');
-    //             throw new Error('Location permission not granted');
-    //           }
-    //           setStatus(status)
-    //       }
-    //     }
-    //     reqPermission()
-    //   }, [])
-
-    // const handleOutModal = () => {
-    //     setModalVisible(false)
-    //     setAgree(true)
-    // }
 
     return (
         // <SafeAreaView forceInset={{top: "always"}}>

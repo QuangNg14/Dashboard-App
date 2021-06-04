@@ -19,18 +19,21 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Allow Dashboard to use your camera to upload your avatar images",
-        "NSLocationWhenInUseUsageDescription": "Allow Dashboard to use your location when in app to record your running, swimming, cycling or biking routes in a map", 
-        "NSLocationAlwaysUsageDescription": "Allow Dashboard to use your location all the time when your screen is locked or your app is in the background during your running, swimming, cycling or biking routes in a map to maximize your experience",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow Dashboard to use your location all the time when your screen is locked or your app is in the background during your running, swimming, cycling or biking routes in a map to maximize your experience",
-        "NSPhotoLibraryUsageDescription": "Give Dashboard permission to access your photos to upload your avatar images or upload your tracks' photos",
+        "NSCameraUsageDescription": "Allow Dashboard to use your camera to upload your avatar images.",
+        "NSLocationWhenInUseUsageDescription": "Allow Dashboard to use your location when in app to record your running, swimming, cycling or biking routes on a map.", 
+        "NSLocationAlwaysUsageDescription": "Allow Dashboard to use your location all the time when your screen is locked or your app is in the background to record your routes on a map.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow Dashboard to use your location all the time when your screen is locked or your app is in the background to record your routes on a map.",
+        "NSPhotoLibraryUsageDescription": "Give Dashboard permission to access your photos to upload your avatar images or upload your tracks' photos.",
         "UIBackgroundModes": [
           "location",
           "fetch"
         ]
       },
       "bundleIdentifier": "com.quangnguyen140102app.dashboard",
-      "buildNumber": "1.8.0"
+      "buildNumber": "1.9.0",
+      "config":{
+        "googleMapsApiKey": "AIzaSyA9Oz9ZRwWHhIfcHZT9v3EHduhyQ9aXYJI"
+      }
     },
     "android": {
       "adaptiveIcon": {

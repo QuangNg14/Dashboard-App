@@ -1,18 +1,23 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Input, Button, Text, } from 'react-native-elements';
 import Spacer from './Spacer';
 import { Context as LocationContext } from '../context/LocationContext';
 import useSaveTracks from '../hooks/useSaveTracks';
-import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, TouchableOpacity, View, DeviceEventEmitter, AppState } from 'react-native';
 import { reverseGeocodeAPI } from '../api/googleReverseGeocoding';
 import TimerUp from './TimerUp';
 import * as Location from "expo-location"
+import * as TaskManager from 'expo-task-manager';
+import { useIsFocused } from '@react-navigation/core';
+import * as Permissions from 'expo-permissions';
 
+const LOCATION_TRACKING = 'location-tracking';
+let CallbackTaskManager;
 
-const TrackForm = ({navigation}) => {
+const TrackForm = ({ navigation }) => {
   const {
     state: { name, isRecording, locations, currentLocation,
-      currentSpeed, averageSpeed, speedLst, totalDistanceTravelled, markedLocationsAddresses, markedLocations},
+      currentSpeed, averageSpeed, speedLst, totalDistanceTravelled, markedLocationsAddresses, markedLocations },
     startRecording,
     stopRecording,
     updateTrackName,
@@ -22,13 +27,82 @@ const TrackForm = ({navigation}) => {
     reset
   } = useContext(LocationContext);
 
-  const { state: { timeSecond, timeMinute, timeHour }, updateTime } = useContext(LocationContext)
+  const { state: { timeSecond, timeMinute, timeHour }, updateTime, addLocation } = useContext(LocationContext)
   const [second, setSecond] = useState(parseInt(timeSecond))
   const [timeSecondLocal, setTimeSecondLocal] = useState(timeSecond)
   const [minute, setMinute] = useState(parseInt(timeMinute))
   const [timeMinuteLocal, setTimeMinuteLocal] = useState(timeMinute)
   const [hour, setHour] = useState(parseInt(timeHour))
   const [timeHourLocal, setTimeHourLocal] = useState(timeHour)
+  const isFocused = useIsFocused()
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    AppState.addEventListener('change', _handleAppStateChange);
+    return () => {
+      AppState.removeEventListener('change', _handleAppStateChange);
+    };
+  }, []);
+
+  const _handleAppStateChange = (nextAppState) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      console.log('App has come to the foreground!');
+    }
+    else{
+      console.log("App has come to the background")
+    }
+
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+  };
+
+  const subscriber = React.useRef();
+  const startLocationTracking = React.useCallback(async () => {
+    await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
+      accuracy: Location.Accuracy.BestForNavigation,
+      timeInterval: 5000, //update every second
+      distanceInterval: 10, //update every 10 meters,
+      foregroundService: {
+        notificationTitle: 'Using your location',
+        notificationBody: 'To turn off, go back to the app and switch something off.',
+      },
+      pausesUpdatesAutomatically: true
+    });
+    const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+      LOCATION_TRACKING
+    );
+    console.log('tracking started?', hasStarted);
+    startTracking();
+  }, []);
+
+  useEffect(() => {
+    const config = async () => {
+      let res = await Permissions.askAsync(Permissions.LOCATION);
+      if (res.status !== 'granted') {
+        console.log('Permission to access location was denied');
+      } 
+    };
+    config();
+  }, []);
+
+  const startTracking = React.useCallback(() => {
+    subscriber.current = DeviceEventEmitter.addListener('callback', (value) => {
+      addLocation(value, isRecording)
+    });
+  }, []);
+  const pauseTracking = React.useCallback(() => {
+    subscriber.current?.remove();
+    Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING).then((value) => {
+      if (value) {
+        Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+      }
+    });
+  }, []);
+
 
   useEffect(() => {
     let interval = setTimeout(() => setSecond(second + 1), 1000)
@@ -71,8 +145,7 @@ const TrackForm = ({navigation}) => {
   const handleMarkedLocation = async () => {
     let latitude = currentLocation && currentLocation.coords.latitude
     let longitude = currentLocation && currentLocation.coords.longitude
-    const res = await Location.reverseGeocodeAsync({latitude: latitude, longitude: longitude})
-    console.log(res)
+    const res = await Location.reverseGeocodeAsync({ latitude: latitude, longitude: longitude })
     addMarkedLocation(currentLocation, res[0])
   }
 
@@ -92,11 +165,25 @@ const TrackForm = ({navigation}) => {
     }
   }, [locations])
 
+  useEffect(() => {
+    if(appStateVisible !== "active"){
+      if(isFocused && isRecording){
+        startLocationTracking()
+      }
+    }
+  }, [isRecording, appStateVisible])
+
   const handleStartRecording = () => {
     startRecording()
   }
 
+  const handleStopRecording = () => {
+    stopRecording()
+    pauseTracking()
+  }
+
   const handleCancer = () => {
+    pauseTracking()
     updateTime(timeSecondLocal, timeMinuteLocal, timeHourLocal)
     setSecond(0)
     setMinute(0)
@@ -108,8 +195,10 @@ const TrackForm = ({navigation}) => {
     setSecond(0)
     setMinute(0)
     setHour(0)
-    navigation.navigate("Track Information", {timeHour, timeMinute, timeSecond, locations, currentLocation,
-      averageSpeed, totalDistanceTravelled, markedLocations, markedLocationsAddresses})
+    navigation.navigate("Track Information", {
+      timeHour, timeMinute, timeSecond, locations, currentLocation,
+      averageSpeed, totalDistanceTravelled, markedLocations, markedLocationsAddresses
+    })
     // saveTrack()
   }
 
@@ -164,55 +253,69 @@ const TrackForm = ({navigation}) => {
 
             </View>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.stopBtn} onPress={stopRecording}>
-                <Text style={{ fontWeight: "bold", 
-                fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)" }}>STOP</Text>
+              <TouchableOpacity style={styles.stopBtn} onPress={handleStopRecording}>
+                <Text style={{
+                  fontWeight: "bold",
+                  fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)"
+                }}>STOP</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.markBtn} onPress={handleMarkedLocation}>
-                <Text style={{ fontWeight: "bold", 
-                fontSize: Platform.OS === "ios" ? 16 : 14, color: "white" }}>PIN</Text>
+                <Text style={{
+                  fontWeight: "bold",
+                  fontSize: Platform.OS === "ios" ? 16 : 14, color: "white"
+                }}>PIN</Text>
               </TouchableOpacity>
 
             </View>
           </>
         ) : (
-            <>
-              {!isRecording && locations.length ? (
-                <>
-                <View style={{display: 'flex', flexDirection:"row",
-                 justifyContent:"center",
-                 alignItems:"center"}}>
+          <>
+            {!isRecording && locations.length ? (
+              <>
+                <View style={{
+                  display: 'flex', flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}>
 
                   <TouchableOpacity style={styles.stopBtn} onPress={handleStartRecording}>
-                    <Text style={{ fontWeight: "bold", 
-                    fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)" }}>RESUME</Text>
+                    <Text style={{
+                      fontWeight: "bold",
+                      fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)"
+                    }}>RESUME</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.markBtn} onPress={handleSave}>
-                    <Text style={{ fontWeight: "bold", 
-                    fontSize: Platform.OS === "ios" ? 16 : 14, color: "white" }}>SAVE</Text>
+                    <Text style={{
+                      fontWeight: "bold",
+                      fontSize: Platform.OS === "ios" ? 16 : 14, color: "white"
+                    }}>SAVE</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.cancelBtn} onPress={handleCancer}>
-                    <Text style={{ fontWeight: "bold", 
-                    fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)" }}>CANCEL</Text>
+                    <Text style={{
+                      fontWeight: "bold",
+                      fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)"
+                    }}>CANCEL</Text>
                   </TouchableOpacity>
                 </View>
-                </>
+              </>
+            )
+              : (
+                <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
+                  <TouchableOpacity style={styles.markBtn} onPress={handleStartRecording}>
+                    <Text style={{
+                      fontWeight: "bold",
+                      fontSize: Platform.OS === "ios" ? 16 : 14, color: "white"
+                    }}>RECORD</Text>
+                  </TouchableOpacity>
+                </View>
               )
-                : (
-                    <View style={{width:"100%", justifyContent: "center", alignItems: "center" }}>
-                      <TouchableOpacity style={styles.markBtn} onPress={handleStartRecording}>
-                        <Text style={{ fontWeight: "bold", 
-                        fontSize: Platform.OS === "ios" ? 16 : 14, color: "white" }}>RECORD</Text>
-                      </TouchableOpacity>
-                    </View>
-                )
 
-              }
-            </>
-          )}
+            }
+          </>
+        )}
       </Spacer>
 
 
@@ -334,7 +437,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 10
   },
-  cancelBtn:{
+  cancelBtn: {
     width: 80,
     height: 80,
     borderRadius: 40,
@@ -348,3 +451,20 @@ const styles = StyleSheet.create({
 })
 
 export default TrackForm;
+
+TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
+  if (error) {
+    console.log('LOCATION_TRACKING task ERROR:', error);
+    return;
+  }
+  if (data) {
+    const { locations } = data;
+    let lat = locations[0].coords.latitude;
+    let long = locations[0].coords.longitude;
+    DeviceEventEmitter.emit('callback', locations[0])
+
+    // console.log(
+    //   `${new Date(Date.now()).toLocaleString()}: ${lat},${long}`
+    // );
+  }
+});

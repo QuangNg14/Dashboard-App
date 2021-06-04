@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useContext } from 'react';
-import { FlatList, Image } from 'react-native';
+import { Image } from 'react-native';
 import { ActivityIndicator, StyleSheet, View } from "react-native"
-import { Text } from "react-native-elements"
-import MapView, { Polyline, Circle, Marker, Callout, Animated } from 'react-native-maps';
-import Pulse from 'react-native-pulse';
+import MapView, { Polyline, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Context as LocationContext } from '../context/LocationContext';
 import * as Location from "expo-location"
 import * as Permissions from 'expo-permissions';
 import { useIsFocused } from '@react-navigation/core';
-import Modal from 'react-native-modal';
-import { EvilIcons, FontAwesome5 } from '@expo/vector-icons';
-import { Button } from 'react-native';
+import {FontAwesome5 } from '@expo/vector-icons';
+import PolylineComponent from './PolylineComponent';
+
 
 const Map = () => {
   const { state: { currentLocation, locations, isRecording,
@@ -22,7 +20,6 @@ const Map = () => {
   const [isModalVisible, setModalVisible] = useState(false)
   const isFocused = useIsFocused()
   const [followsUserLocation, setFollowsUserLocation] = useState(false)
-
   useEffect(() => {
     const getPermission = async () => {
       const permission = await Location.getPermissionsAsync()
@@ -53,7 +50,7 @@ const Map = () => {
     const reqPermission = async () => {
       const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
       if (status !== 'granted') {
-        alert('We are using your location for the best experience in the application. Please turn on location services for the application');
+        alert('We are using your location to display your training routes on the map. Please turn on location services for the application');
         throw new Error('Location permission not granted');
       }
       setStatus(status)
@@ -64,10 +61,10 @@ const Map = () => {
   if (!location) {
     return <ActivityIndicator size="large" style={{ marginTop: 200 }} />
   }
-
   return (
       <View style={{ flex: 1 }}>
         <MapView
+          // provider={PROVIDER_GOOGLE}
           style={{ height: isRecording ? "50%" : "80%", flex: 1 }}
           initialRegion={location ? {
             ...location.coords,
@@ -92,16 +89,7 @@ const Map = () => {
           showsUserLocation={true}
           followsUserLocation={followsUserLocation}
         >
-          {locations ? (
-            <Polyline
-              coordinates={locations.map((location) => location.coords)}
-              strokeWidth={5}
-              strokeColor="rgb(255, 111, 97)"
-              fillColor="rgb(255, 111, 97)"
-              zIndex={-1}
-            />
-          ) : null}
-
+          <PolylineComponent locations={locations}/>
           {/* {locations && locations.map((location, key) => (
             <Marker
               coordinate={{
@@ -128,7 +116,7 @@ const Map = () => {
               description={markedLocationsAddresses[key]}
               key={key}
             >
-              <Image source={require("../../assets/map-marker.png")}
+              <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
                 style={{ width: 40, height: 40 }}
                 resizeMode="center"
                 resizeMethod="resize"
@@ -148,38 +136,6 @@ const Map = () => {
           <FontAwesome5 name="search-location" size={24} color="black" 
           onPress={() => setFollowsUserLocation(!followsUserLocation)} />
         </View>
-        <Modal
-          isVisible={isModalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-          style={{
-            display: "flex", justifyContent: "center",
-            alignItems: "center"
-          }}>
-          <View style={{
-            backgroundColor: "white", width: "100%",
-            height: "40%", flexDirection: "column"
-          }}>
-            <View style={{ height: "100%", width: "100%" }}>
-              <View style={{ height: "15%", width: "100%", justifyContent: "center", alignItems: "center", marginTop: 20 }}>
-                <EvilIcons name="location" size={50} color="black" />
-              </View>
-              <View style={{ height: "20%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>Use Your Location</Text>
-              </View>
-
-              <View style={{ height: "20%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                <Text style={{ fontSize: 15 }}>This app collects location data to see maps for automatically tracked activities even when the app is closed or not in use.</Text>
-              </View>
-
-              <View style={{ height: "20%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                <Text style={{ fontSize: 15 }}>Dashboard will use location in the background to show runs, walks, cycles, or bike rides in a map</Text>
-              </View>
-              <View style={{ height: "20%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                <Button title="Next" onPress={() => setModalVisible(false)} />
-              </View>
-            </View>
-          </View>
-        </Modal>
       </View>
   )
 }

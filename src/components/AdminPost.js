@@ -1,7 +1,7 @@
 import { AntDesign, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons'
 import React, { useContext, useEffect } from 'react'
 import { Image, StyleSheet, Text, View, Share } from 'react-native'
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Marker, Polyline } from 'react-native-maps'
 import { reverseGeocodeAsync } from "expo-location"
 import { useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -10,12 +10,12 @@ import { Context as PostContext } from "../context/PostContext"
 import Modal from 'react-native-modal';
 import { Platform } from 'react-native'
 
-const Post = (props) => {
+const AdminPost = (props) => {
     const { _id, name, locations, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
         markedLocations, markedLocationsAddresses, averageSpeed,
-        type, sport, description, commute, curHour, curMinute, likes, comments, image, avatar, navigation } = props
+        type, sport, description, commute, curHour, curMinute, likes, comments, image, avatar, verified, navigation } = props
 
-    const { likePost, deletePost } = useContext(PostContext)
+    const { likePost, deletePost, rejectPost, approvePost } = useContext(PostContext)
     const initialLocation = locations.length ? locations[0].coords : {
         latitude: 37.33233141,
         longitude: -122.0312186,
@@ -39,6 +39,8 @@ const Post = (props) => {
 
 
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isModalVisible2, setModalVisible2] = useState(false)
+    const [isModalVisible3, setModalVisible3] = useState(false)
     const [curAddress, setCurAddress] = useState({})
     const [user, setUser] = useState(null)
     const [thisPost, setThisPost] = useState(null)
@@ -48,6 +50,14 @@ const Post = (props) => {
         setModalVisible(!isModalVisible)
         setDeleted(true)
         setUniqueValue(uniqueValue + 1)
+    }
+
+    const toggleModal2 = () => {
+        setModalVisible2(!isModalVisible2)
+    }
+
+    const toggleModal3 = () => {
+        setModalVisible3(!isModalVisible3)
     }
 
     //_id là postId
@@ -71,8 +81,18 @@ const Post = (props) => {
             navigation.navigate("Feed")
         }
         else {
-            alert("You are not auth")
+            alert("You are not authorized")
         }
+    }
+
+    const handleApprovePost = () => {
+        approvePost(_id)
+        toggleModal()
+    }
+
+    const handleRejectPost = () => {
+        rejectPost(_id)
+        toggleModal()
     }
 
     const onSharePost = async () => {
@@ -133,7 +153,7 @@ const Post = (props) => {
                         source={{uri: avatar && avatar}}
                     />
                 </View>
-                <View style={{ width: "67%", height: "90%" }}>
+                <View style={{ width: "55%", height: "90%" }}>
                     <View style={{ width: "100%", height: "50%", justifyContent: "center" }}>
                         <Text style={{ fontWeight: "bold", fontSize: Platform.OS === "ios" ? 14 : 12 }}>{name}</Text>
                     </View>
@@ -142,12 +162,20 @@ const Post = (props) => {
                     </View>
                 </View>
                 <View style={{
-                    width: "8%", height: "100%", justifyContent: "center",
-                    alignItems: "center"
+                    width: "25%", height: "100%", justifyContent: "center",
+                    alignItems: "center", flexDirection:"row"
                 }}>
+
+                    <TouchableOpacity onPress={toggleModal2}>
+                        <AntDesign name="checkcircleo" size={24} color="black" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={toggleModal3}>
+                        <AntDesign name="checkcircleo" size={24} color="black" />
+                    </TouchableOpacity>
+   
                     <TouchableOpacity onPress={toggleModal}>
-                        {thisPost && user && thisPost.userId == user._id ? (
-                            <Ionicons name="remove-circle-outline" size={24} color="black" />) : null}
+                        <Ionicons name="remove-circle-outline" size={30} color="black" />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -192,6 +220,83 @@ const Post = (props) => {
             </Modal>
 
 
+            <Modal
+                isVisible={isModalVisible2}
+                onBackdropPress={() => setModalVisible2(false)}
+                style={{
+                    display: "flex", justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                <View style={{
+                    backgroundColor: "white", width: "80%", 
+                    height: Platform.OS === "ios" ? "15%" : "20%", flexDirection: "column"
+                }}>
+                    <View style={{ height: "30%", width: "100%", alignItems: "center", justifyContent: "flex-end" }}>
+                        <Text style={{ fontSize: Platform.OS === "ios" ? 16 : 14, fontWeight: "bold" }}>Do you want to delete this post?</Text>
+                    </View>
+                    <View style={{
+                        flexDirection: "row", width: "100%", height: "70%", justifyContent: "center",
+                        alignItems: "center"
+                    }}>
+                        <View style={{
+                            width: "40%", height: "50%", backgroundColor: "rgb(51, 204, 51)", justifyContent: "center", marginRight: 20,
+                            alignItems: "center"
+                        }}>
+                            <TouchableOpacity onPress={handleApprovePost}>
+                                <Text style={{ color: "white", fontWeight: "bold" }}>Approve</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={{
+                            width: "40%", height: "50%", justifyContent: "center",
+                            alignItems: "center", borderWidth: 1
+                        }}>
+                            <TouchableOpacity onPress={toggleModal2}>
+                                <Text>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                isVisible={isModalVisible3}
+                onBackdropPress={() => setModalVisible3(false)}
+                style={{
+                    display: "flex", justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                <View style={{
+                    backgroundColor: "white", width: "80%", 
+                    height: Platform.OS === "ios" ? "15%" : "20%", flexDirection: "column"
+                }}>
+                    <View style={{ height: "30%", width: "100%", alignItems: "center", justifyContent: "flex-end" }}>
+                        <Text style={{ fontSize: Platform.OS === "ios" ? 16 : 14, fontWeight: "bold" }}>Do you want to delete this post?</Text>
+                    </View>
+                    <View style={{
+                        flexDirection: "row", width: "100%", height: "70%", justifyContent: "center",
+                        alignItems: "center"
+                    }}>
+                        <View style={{
+                            width: "40%", height: "50%", backgroundColor: "rgb(51, 204, 51)", justifyContent: "center", marginRight: 20,
+                            alignItems: "center"
+                        }}>
+                            <TouchableOpacity onPress={handleRejectPost}>
+                                <Text style={{ color: "white", fontWeight: "bold" }}>Approve</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={{
+                            width: "40%", height: "50%", justifyContent: "center",
+                            alignItems: "center", borderWidth: 1
+                        }}>
+                            <TouchableOpacity onPress={toggleModal3}>
+                                <Text>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
 
             <View style={styles.description}>
                 {description ? (
@@ -199,6 +304,7 @@ const Post = (props) => {
                 ) : (
                         <Text style={{ fontSize: 15, marginHorizontal: 12, fontWeight: "bold" }}>{type}</Text>
                     )}
+                <Text style={{fontSize: 16, fontWeight:"bold"}}>{verified ? "Verified" : "Not Verified"}</Text>
             </View>
             <View style={styles.infoContainer}>
                 <View style={styles.left}>
@@ -238,7 +344,6 @@ const Post = (props) => {
                     <Image source={{ uri: image }} style={{ height: "100%", width: "100%" }} />
                 ) : (<MapView
                     style={{ height: "100%" }}
-                    provider={PROVIDER_GOOGLE}
                     initialRegion={{
                         ...initialLocation,
                         latitudeDelta: 0.01,
@@ -434,4 +539,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default Post
+export default AdminPost

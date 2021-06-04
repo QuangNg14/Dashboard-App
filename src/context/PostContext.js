@@ -56,8 +56,26 @@ const deletePost = dispatch => async (id) => {
     const res = await trackerApi.delete(`/posts/${id}`)
 }
 
+const rejectPost = dispatch => async (postId) => {
+    try {
+        await trackerApi.post("/posts/reject", {postId})
+    }
+    catch(err){
+        console.log(err)
+    } 
+}
+
+const approvePost = dispatch => async (postId) => {
+    try {
+        await trackerApi.post("/posts/approve", {postId})
+    }
+    catch(err){
+        console.log(err)
+    } 
+}
+
 export const {Context, Provider} = createDataContext(
     postReducer,
-    {fetchPosts, createPost, likePost, commentPost, deletePost},
+    {fetchPosts, createPost, likePost, commentPost, deletePost, approvePost, rejectPost},
     initialState
 )

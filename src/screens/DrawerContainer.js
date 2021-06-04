@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Image } from "react-native"
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer"
 import { MaterialIcons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { Ionicons } from '@expo/vector-icons'; 
-import {AuthContext} from "../context/Context"
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { AuthContext } from "../context/Context"
 import {
   Avatar,
   Title,
@@ -20,16 +20,16 @@ import { useContext } from 'react';
 import trackerApi from "../api/tracker"
 const DrawerContainer = (props) => {
   const paperTheme = useTheme();
-  const {signOut, toggleTheme} = useContext(AuthContext)
+  const { signOut, toggleTheme } = useContext(AuthContext)
   const [user, setUser] = useState(null)
 
   useEffect(() => {
     const getCurrentUser = async () => {
-        const res = await trackerApi.get("/user")
-        setUser(res.data)
+      const res = await trackerApi.get("/user")
+      setUser(res.data)
     }
     getCurrentUser()
-  },[])
+  }, [])
 
   return (
     <View style={{ flex: 1 }}>
@@ -41,7 +41,7 @@ const DrawerContainer = (props) => {
                 source={{
                   uri: user && user.image
                 }}
-                style={{width: 50, height: 50, borderRadius: 25}}
+                style={{ width: 50, height: 50, borderRadius: 25 }}
               />
               <View style={{ marginLeft: 15, flexDirection: 'column' }}>
                 <Title style={styles.title}>{user && user.firstName} {user && user.lastName}</Title>
@@ -84,13 +84,22 @@ const DrawerContainer = (props) => {
               onPress={() => { props.navigation.navigate('TrackCreate') }}
             />
 
-              <DrawerItem
+            <DrawerItem
               icon={({ color, size }) => (
                 <MaterialCommunityIcons name="newspaper" size={size} color={color} />
               )}
               label="Feed"
               onPress={() => { props.navigation.navigate('Feed') }}
             />
+            {user && user.email == "admindashboard@gmail.com" ? (
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialCommunityIcons name="newspaper" size={size} color={color} />
+                )}
+                label="Admin"
+                onPress={() => { props.navigation.navigate('Feed') }}
+              />
+            ):null}
           </Drawer.Section>
           {/* <Drawer.Section title="Preferences">
             <TouchableRipple onPress={() => { toggleTheme() }}>
@@ -105,7 +114,7 @@ const DrawerContainer = (props) => {
         </View>
       </DrawerContentScrollView>
       <Drawer.Section style={styles.bottomDrawerSection}>
-      <DrawerItem
+        <DrawerItem
           label="@Product by Quang Nguyen"
         />
       </Drawer.Section>

@@ -4,7 +4,7 @@ import { Text, View, Button, StyleSheet, TouchableOpacity, Image } from "react-n
 import { Context as TrackContext } from "../context/TrackContext"
 import { Context as PostContext } from "../context/PostContext"
 import { Context as LocationContext } from "../context/LocationContext"
-import MapView, { Callout, Marker, Polyline } from "react-native-maps"
+import MapView, { Callout, Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps"
 import trackerApi from "../api/tracker"
 import { useIsFocused } from '@react-navigation/native'
 import { FontAwesome5 } from '@expo/vector-icons'
@@ -52,7 +52,7 @@ const TrackDetailScreen = ({ navigation, route }) => {
       track.markedLocations, track.markedLocationsAddresses, Math.abs(track.averageSpeed), track.type,
       track.sport, track.description, track.commute, hour, minute, track.image, curUser.image, Date.now())
     reset()
-    alert("Shared to Feed")
+    alert("Please wait for the admin to verify your post. It will be posted to Feed shortly.")
   }
   
   const initialLocation = track.locations.length ? track.locations[0].coords : {
@@ -78,6 +78,7 @@ const TrackDetailScreen = ({ navigation, route }) => {
     <>
       <MapView
         style={styles.map}
+        provider={PROVIDER_GOOGLE}
         initialRegion={{
           ...initialLocation,
           latitudeDelta: 0.005,
@@ -132,7 +133,7 @@ const TrackDetailScreen = ({ navigation, route }) => {
             description={track.markedLocationsAddresses[key]}
             key={key}
           >
-            <Image source={require("../../assets/map-marker.png")}
+            <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
               style={{ width: 40, height: 40 }}
               resizeMethod="resize"
             />

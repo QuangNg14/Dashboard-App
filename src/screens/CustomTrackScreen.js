@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, Image, Button, TouchableOpacity, TextInput, Switch,
   KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, Keyboard
 } from 'react-native'
-import MapView, { Marker, Polyline } from "react-native-maps"
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps"
 import Spacer from '../components/Spacer'
 import Modal from 'react-native-modal';
 import { Picker } from '@react-native-picker/picker';
@@ -121,6 +121,7 @@ const CustomTrackScreen = ({ route, navigation }) => {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <MapView
         style={styles.map}
+        provider={PROVIDER_GOOGLE}
         initialRegion={{
           ...initialLocation,
           latitudeDelta: 0.005,
@@ -148,7 +149,7 @@ const CustomTrackScreen = ({ route, navigation }) => {
             description={markedLocationsAddresses[key]}
             key={key}
           >
-            <Image source={require("../../assets/map-marker.png")}
+            <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
               style={{ width: 40, height: 40 }}
               resizeMode="center"
               resizeMethod="resize"
@@ -378,7 +379,7 @@ const CustomTrackScreen = ({ route, navigation }) => {
             description={markedLocationsAddresses[key]}
             key={key}
           >
-            <Image source={require("../../assets/map-marker.png")}
+            <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
               style={{ width: 40, height: 40 }}
               resizeMode="center"
               resizeMethod="resize"
