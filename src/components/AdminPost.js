@@ -13,7 +13,7 @@ import { Platform } from 'react-native'
 const AdminPost = (props) => {
     const { _id, name, locations, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
         markedLocations, markedLocationsAddresses, averageSpeed,
-        type, sport, description, commute, curHour, curMinute, likes, comments, image, avatar, verified, navigation } = props
+        type, sport, description, commute, curHour, curMinute, likes, comments, image, avatar, verified, navigation, curAddress } = props
 
     const { likePost, deletePost, rejectPost, approvePost } = useContext(PostContext)
     const initialLocation = locations.length ? locations[0].coords : {
@@ -41,7 +41,6 @@ const AdminPost = (props) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModalVisible2, setModalVisible2] = useState(false)
     const [isModalVisible3, setModalVisible3] = useState(false)
-    const [curAddress, setCurAddress] = useState({})
     const [user, setUser] = useState(null)
     const [thisPost, setThisPost] = useState(null)
     const [uniqueValue, setUniqueValue] = useState(0)
@@ -73,14 +72,9 @@ const AdminPost = (props) => {
     }
 
     const handleDeletePost = () => {
-        if (thisPost.userId == user._id) {
-            deletePost(_id)
-            toggleModal()
-            navigation.navigate("Feed")
-        }
-        else {
-            alert("You are not authorized")
-        }
+        deletePost(_id)
+        toggleModal()
+        navigation.navigate("Feed")
     }
 
     const handleApprovePost = () => {
@@ -96,8 +90,10 @@ const AdminPost = (props) => {
     const onSharePost = async () => {
         try {
             const result = await Share.share({
-                message: `I have done an exercise going ${Math.round(totalDistanceTravelled * 100) / 100} km with average pace ${Math.round(averageSpeed * 10) / 10} km/h in ${timeHour}:${timeMinute}:${timeSecond}`,
-                uri: image
+                message: `I have done an exercise going ${Math.round(totalDistanceTravelled * 100) / 100} km with average pace ${Math.round((60/averageSpeed) * 10) / 10} km/h in ${timeHour}:${timeMinute}:${timeSecond}`,
+                url: image,
+                subject: 'My amazing Track',
+                title: 'My amazing Track'
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -127,14 +123,6 @@ const AdminPost = (props) => {
             setThisPost(res.data)
         }
         getCurrentPost()
-    }, [])
-
-    useEffect(() => {
-        const getReverseAddress = async () => {
-            const res = await reverseGeocodeAsync(initialLocation)
-            setCurAddress(res[0])
-        }
-        getReverseAddress()
     }, [])
 
     return (

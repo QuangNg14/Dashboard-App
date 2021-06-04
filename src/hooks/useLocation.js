@@ -26,7 +26,7 @@ export default (isFocused, shouldTrack, callback) => {
                     subscriber = await watchPositionAsync(
                         {
                             accuracy: Accuracy.BestForNavigation,
-                            timeInterval: 5000,
+                            timeInterval: 3000,
                             distanceInterval: 30,
                         },
                         callback

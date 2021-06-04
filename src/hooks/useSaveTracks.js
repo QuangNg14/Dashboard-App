@@ -8,12 +8,12 @@ export default () => {
     const {fetchTracks, createTrack} = useContext(TrackContext)
     const {state: {name, locations, markedLocations, averageSpeed,
          markedLocationsAddresses, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
-         type, sport, description, commute, image}
+         type, sport, description, commute, image, curAddress}
          , reset} = useContext(LocationContext)
     
     const saveTrack = async () => {
         await createTrack(name, locations, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
-            markedLocations, markedLocationsAddresses, Math.abs(averageSpeed), type, sport, description, commute, image)
+            markedLocations, markedLocationsAddresses, Math.abs(averageSpeed), type, sport, description, commute, image, curAddress)
         reset()
         RootNavigation.navigate('TrackList');
     }

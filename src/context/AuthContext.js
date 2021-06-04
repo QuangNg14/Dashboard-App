@@ -37,7 +37,7 @@ const signup = (dispatch) => {
         }   
         catch(err){
             //always call dispatch to update our state
-            dispatch({type: 'add_error', payload: 'Something went wrong with Sign Up'})
+            dispatch({type: 'add_error', payload: 'Something went wrong with Sign Up. Try a different username and fill up all the inputs.'})
             console.log(err.response.data)
         }
     }
@@ -52,7 +52,7 @@ const signin = (dispatch) => {
             const res = await trackerApi.post("/signin", {email, password})
         }
         catch(err){
-            dispatch({type: "add_error", payload: "Something went wrong with Sign In"})
+            dispatch({type: "add_error", payload: "Something went wrong with Sign In. Please recheck your email and password"})
             console.log(err.response.data)
         }
     }

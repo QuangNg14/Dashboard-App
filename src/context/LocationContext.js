@@ -20,6 +20,7 @@ const initialState = {
     description: "",
     commute: false,
     image:"",
+    curAddress: {}
 }
 
 const locationReducer = (prevState, action) => {
@@ -113,6 +114,7 @@ const locationReducer = (prevState, action) => {
                 description: action.payload.description,
                 commute: action.payload.commute,
                 image: action.payload.image,
+                curAddress: action.payload.curAddress
             }
         case "reset_locations":
             return {
@@ -131,9 +133,9 @@ const resetLocations = (dispatch) => {
 }
 
 const updateExtraInfo = (dispatch) => {
-    return (type, sport, description, commute, image) => {
+    return (type, sport, description, commute, image, curAddress) => {
         dispatch({type:"update_extra_info", payload: {type: type, sport: sport,
-             description: description, commute: commute, image: image,}})
+             description: description, commute: commute, image: image, curAddress: curAddress}})
     }
 }
 

@@ -38,7 +38,6 @@ const FeedScreen = ({ navigation }) => {
           {sortedState && (
             <FlatList
               data={sortedState}
-              extraData={sortedState}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               horizontal={false}
@@ -67,6 +66,7 @@ const FeedScreen = ({ navigation }) => {
                     image={item.image}
                     avatar={item.avatar}
                     verified={item.verified}
+                    curAddress={item.curAddress}
                     navigation={navigation}
                   />
                 )
@@ -108,6 +108,7 @@ const FeedScreen = ({ navigation }) => {
                       comments={item.comments}
                       image={item.image}
                       avatar={item.avatar}
+                      curAddress={item.curAddress}
                       navigation={navigation}
                     />
                   )

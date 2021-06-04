@@ -20,7 +20,7 @@ const Map = () => {
   const [isModalVisible, setModalVisible] = useState(false)
   const isFocused = useIsFocused()
   const [followsUserLocation, setFollowsUserLocation] = useState(false)
-  console.log(locations.length)
+
   useEffect(() => {
     const getPermission = async () => {
       const permission = await Location.getPermissionsAsync()
@@ -67,23 +67,13 @@ const Map = () => {
         <MapView
           // provider={PROVIDER_GOOGLE}
           style={{ height: isRecording ? "50%" : "80%", flex: 1 }}
-          initialRegion={location ? {
+          initialRegion={location && {
             ...location.coords,
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
-          } : {
-            latitude: 37.33233141,
-            longitude: -122.0312186,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
           }}
-          region={currentLocation ? {
+          region={currentLocation && {
             ...currentLocation.coords,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          } : {
-            latitude: 37.33233141,
-            longitude: -122.0312186,
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
           }}

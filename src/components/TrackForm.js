@@ -64,7 +64,7 @@ const TrackForm = ({ navigation }) => {
   const startLocationTracking = React.useCallback(async () => {
     await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
       accuracy: Location.Accuracy.BestForNavigation,
-      timeInterval: 5000, //update every second
+      timeInterval: 3000, //update every second
       distanceInterval: 50, //update every 10 meters,
       foregroundService: {
         notificationTitle: 'Using your location',
@@ -221,10 +221,10 @@ const TrackForm = ({ navigation }) => {
 
                 <View style={styles.topRight}>
                   <View style={styles.headerContainer}>
-                    <Text>AVG SPEED (KM/H)</Text>
+                    <Text>AVG PACE (M/KM)</Text>
                   </View>
                   <View style={styles.numberContainerRight}>
-                    <Text style={styles.numberStyle}>{Math.abs(Math.round(averageSpeed * 10) / 10)}</Text>
+                    <Text style={styles.numberStyle}>{Math.abs(Math.round((60/currentSpeed ) * 10) / 10)}</Text>
                   </View>
                   <View style={{ width: "100%", height: "10%" }}></View>
                 </View>

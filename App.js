@@ -365,7 +365,7 @@ export default function App({ navigation }) {
       }
       catch (err) {
         //always call dispatch to update our state
-        dispatch({ type: 'add_error', payload: 'Something went wrong with Sign In' })
+        dispatch({ type: 'add_error', payload: 'Something went wrong with Sign In. Please recheck your email and password.' })
         console.log(err.response.data)
       }
     },
@@ -378,7 +378,7 @@ export default function App({ navigation }) {
       }
       catch (err) {
         //always call dispatch to update our state
-        dispatch({ type: 'add_error', payload: 'Something went wrong with Sign Up' })
+        dispatch({ type: 'add_error', payload: 'Something went wrong with Sign Up. This username is already exist. Try a different username.' })
         console.log(err.response.data)
       }
     },

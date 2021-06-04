@@ -22,10 +22,10 @@ const fetchTracks = (dispatch) => {
 }
 
 const createTrack = dispatch => async (name, locations, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
-    markedLocations, markedLocationsAddresses, averageSpeed, type, sport, description, commute, image) => {
+    markedLocations, markedLocationsAddresses, averageSpeed, type, sport, description, commute, image, curAddress) => {
     try{
         await trackerApi.post('/tracks', {name, locations, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
-            markedLocations, markedLocationsAddresses, averageSpeed, type, sport, description, commute, image});
+            markedLocations, markedLocationsAddresses, averageSpeed, type, sport, description, commute, image, curAddress});
     }
     catch(err){
         console.log(err)

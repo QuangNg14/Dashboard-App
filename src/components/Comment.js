@@ -1,6 +1,5 @@
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'; 
 
 const Comment = (props) => {
     const {username, text, user, avatar} = props
@@ -15,7 +14,7 @@ const Comment = (props) => {
                 }}>
                     <Text style={{fontWeight: "bold"}}>{username.trim()}</Text>
                 </View>
-                <View style={{height: "30%", width: "100%", justifyContent:"center"
+                <View style={{height: "50%", width: "100%", justifyContent:"center"
                 }}>
                     <Text>
                         {text}
@@ -34,13 +33,18 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection:"row",
         marginTop: 20,
-        height: 70
+        height: 70,
     },
     avatar:{
         width:"20%",
         height:"100%",
         alignItems:"center",
         justifyContent:"center"
+    },
+    comment:{
+        width: "70%",
+        height: "100%",
+        flexWrap: 'wrap'
     },
     ava:{
         width: 50,

@@ -22,10 +22,10 @@ const fetchPosts = (dispatch) => {
 }
 
 const createPost = dispatch => async (trackId, name, locations, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
-    markedLocations, markedLocationsAddresses, averageSpeed, type, sport, description, commute, curHour, curMinute, image, avatar, createdAt) => {
+    markedLocations, markedLocationsAddresses, averageSpeed, type, sport, description, commute, curHour, curMinute, image, avatar, curAddress, createdAt) => {
     try{
         await trackerApi.post('/posts', {trackId, name, locations, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
-            markedLocations, markedLocationsAddresses, averageSpeed, type, sport, description, commute, curHour, curMinute, image, avatar, createdAt});
+            markedLocations, markedLocationsAddresses, averageSpeed, type, sport, description, commute, curHour, curMinute, image, avatar, curAddress, createdAt});
     }
     catch(err){
         console.log(err)
@@ -33,7 +33,6 @@ const createPost = dispatch => async (trackId, name, locations, totalDistanceTra
   };
 
 const likePost = dispatch => async (postId, likes) => {
-    console.log(likes)
     try {
         await trackerApi.post("/posts/like", {likes, postId})
     }
@@ -43,7 +42,6 @@ const likePost = dispatch => async (postId, likes) => {
 }
 
 const commentPost = dispatch => async (postId, comments) => {
-    console.log(comments)
     try {
         await trackerApi.post("/posts/comment", {comments, postId})
     }

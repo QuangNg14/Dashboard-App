@@ -13,7 +13,7 @@ import { Platform } from 'react-native'
 const Post = (props) => {
     const { _id, name, locations, totalDistanceTravelled, timeHour, timeMinute, timeSecond,
         markedLocations, markedLocationsAddresses, averageSpeed,
-        type, sport, description, commute, curHour, curMinute, likes, comments, image, avatar, navigation } = props
+        type, sport, description, commute, curHour, curMinute, likes, comments, image, avatar, navigation, curAddress } = props
 
     const { likePost, deletePost } = useContext(PostContext)
     const initialLocation = locations.length ? locations[0].coords : {
@@ -39,7 +39,6 @@ const Post = (props) => {
 
 
     const [isModalVisible, setModalVisible] = useState(false);
-    const [curAddress, setCurAddress] = useState({})
     const [user, setUser] = useState(null)
     const [thisPost, setThisPost] = useState(null)
     const [uniqueValue, setUniqueValue] = useState(0)
@@ -78,8 +77,10 @@ const Post = (props) => {
     const onSharePost = async () => {
         try {
             const result = await Share.share({
-                message: `I have done an exercise going ${Math.round(totalDistanceTravelled * 100) / 100} km with average pace ${Math.round(averageSpeed * 10) / 10} km/h in ${timeHour}:${timeMinute}:${timeSecond}`,
-                uri: image
+                message: `I have done an exercise going ${Math.round(totalDistanceTravelled * 100) / 100} km with average pace ${Math.round((60/averageSpeed) * 10) / 10} km/h in ${timeHour}:${timeMinute}:${timeSecond}`,
+                url: image,
+                subject: 'My amazing Track',
+                title: 'My amazing Track'
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -109,16 +110,6 @@ const Post = (props) => {
             setThisPost(res.data)
         }
         getCurrentPost()
-    }, [])
-
-    useEffect(() => {
-        const getReverseAddress = async () => {
-            const res = await reverseGeocodeAsync(initialLocation)
-            setCurAddress(res[0])
-        }
-        if (Platform.OS === "ios"){
-            getReverseAddress()
-        }
     }, [])
 
     return (
@@ -207,7 +198,7 @@ const Post = (props) => {
                     </View>
                     <View style={styles.numberContainer}>
                         {/* <Text style={styles.numberStyle}>{Math.round(averageSpeed * 10) / 10}</Text> */}
-                        <Text>{Math.round(averageSpeed * 10) / 10} KM/H</Text>
+                        <Text>{Math.round((60/averageSpeed * 10) / 10)} M/KM</Text>
                     </View>
                 </View>
 
@@ -238,7 +229,6 @@ const Post = (props) => {
                     <Image source={{ uri: image }} style={{ height: "100%", width: "100%" }} />
                 ) : (<MapView
                     style={{ height: "100%" }}
-                    provider={PROVIDER_GOOGLE}
                     initialRegion={{
                         ...initialLocation,
                         latitudeDelta: 0.01,

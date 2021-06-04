@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import ImgToBase64 from 'react-native-image-base64';
 import { fileToBase64, fileToBase64Helper } from '../helper/convertToURI';
+import { reverseGeocodeAsync } from 'expo-location';
 
 const CustomTrackScreen = ({ route, navigation }) => {
   const { isRecording, locations, currentLocation,
@@ -30,12 +31,21 @@ const CustomTrackScreen = ({ route, navigation }) => {
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false)
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
+  const [curAddress, setCurAddress] = useState(null)
 
   let CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dw2wkqyh5/upload'
 
   useEffect(() => {
-    updateExtraInfo(trackType, sportType, description, isEnabled, image)
-  }, [trackType, sportType, description, isEnabled, image])
+    const getReverseAddress = async () => {
+        const res = await reverseGeocodeAsync(initialLocation)
+        setCurAddress(res[0])
+    }
+    getReverseAddress()
+  }, [])
+
+  useEffect(() => {
+    updateExtraInfo(trackType, sportType, description, isEnabled, image, curAddress)
+  }, [trackType, sportType, description, isEnabled, image, curAddress])
 
   useEffect(() => {
     (async () => {
@@ -340,6 +350,8 @@ const CustomTrackScreen = ({ route, navigation }) => {
               <Picker.Item label="Run" value="Run" />
               <Picker.Item label="Climb" value="Climb" />
               <Picker.Item label="Hike" value="Hike" />
+              <Picker.Item label="Jog" value="Jog" />
+
             </Picker>
           </View>
         </Modal>
@@ -538,6 +550,8 @@ const CustomTrackScreen = ({ route, navigation }) => {
               <Picker.Item label="Workout" value="Workout" />
               <Picker.Item label="Race" value="Race" />
               <Picker.Item label="Commute" value="Commute" />
+              <Picker.Item label="Jogging" value="Jogging" />
+
             </Picker>
           </View>
         </Modal>

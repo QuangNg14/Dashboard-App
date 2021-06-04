@@ -50,7 +50,7 @@ const TrackDetailScreen = ({ navigation, route }) => {
     createPost(_id, `${firstName} ${lastName}`, track.locations, track.totalDistanceTravelled, track.timeHour, 
       track.timeMinute, track.timeSecond,
       track.markedLocations, track.markedLocationsAddresses, Math.abs(track.averageSpeed), track.type,
-      track.sport, track.description, track.commute, hour, minute, track.image, curUser.image, Date.now())
+      track.sport, track.description, track.commute, hour, minute, track.image, curUser.image, track.curAddress, Date.now())
     reset()
     alert("Please wait for the admin to verify your post. It will be posted to Feed shortly.")
   }
