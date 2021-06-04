@@ -1,4 +1,4 @@
-import { AntDesign, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons'
+import { AntDesign, Entypo, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons'
 import React, { useContext, useEffect } from 'react'
 import { Image, StyleSheet, Text, View, Share } from 'react-native'
 import MapView, { Marker, Polyline } from 'react-native-maps'
@@ -48,8 +48,6 @@ const AdminPost = (props) => {
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible)
-        setDeleted(true)
-        setUniqueValue(uniqueValue + 1)
     }
 
     const toggleModal2 = () => {
@@ -87,12 +85,12 @@ const AdminPost = (props) => {
 
     const handleApprovePost = () => {
         approvePost(_id)
-        toggleModal()
+        toggleModal2()
     }
 
     const handleRejectPost = () => {
         rejectPost(_id)
-        toggleModal()
+        toggleModal3()
     }
 
     const onSharePost = async () => {
@@ -136,9 +134,7 @@ const AdminPost = (props) => {
             const res = await reverseGeocodeAsync(initialLocation)
             setCurAddress(res[0])
         }
-        if (Platform.OS === "ios"){
-            getReverseAddress()
-        }
+        getReverseAddress()
     }, [])
 
     return (
@@ -153,7 +149,7 @@ const AdminPost = (props) => {
                         source={{uri: avatar && avatar}}
                     />
                 </View>
-                <View style={{ width: "55%", height: "90%" }}>
+                <View style={{ width: "50%", height: "90%" }}>
                     <View style={{ width: "100%", height: "50%", justifyContent: "center" }}>
                         <Text style={{ fontWeight: "bold", fontSize: Platform.OS === "ios" ? 14 : 12 }}>{name}</Text>
                     </View>
@@ -162,7 +158,7 @@ const AdminPost = (props) => {
                     </View>
                 </View>
                 <View style={{
-                    width: "25%", height: "100%", justifyContent: "center",
+                    width: "30%", height: "100%", justifyContent: "center",
                     alignItems: "center", flexDirection:"row"
                 }}>
 
@@ -171,7 +167,7 @@ const AdminPost = (props) => {
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={toggleModal3}>
-                        <AntDesign name="checkcircleo" size={24} color="black" />
+                        <Entypo name="circle-with-cross" size={30} color="black" />
                     </TouchableOpacity>
    
                     <TouchableOpacity onPress={toggleModal}>
@@ -278,11 +274,11 @@ const AdminPost = (props) => {
                         alignItems: "center"
                     }}>
                         <View style={{
-                            width: "40%", height: "50%", backgroundColor: "rgb(51, 204, 51)", justifyContent: "center", marginRight: 20,
+                            width: "40%", height: "50%", backgroundColor: "red", justifyContent: "center", marginRight: 20,
                             alignItems: "center"
                         }}>
                             <TouchableOpacity onPress={handleRejectPost}>
-                                <Text style={{ color: "white", fontWeight: "bold" }}>Approve</Text>
+                                <Text style={{ color: "white", fontWeight: "bold" }}>Reject</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -370,7 +366,7 @@ const AdminPost = (props) => {
                         description={`${firstLocation.name} on ${firstLocation.street} ${firstLocation.city}`}
                         key="start"
                     >
-                        <Image source={require("../../assets/house-icon.png")}
+                        <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
                             style={{ width: 40, height: 40 }}
                             resizeMethod="resize"
                         />
@@ -384,7 +380,7 @@ const AdminPost = (props) => {
                         description={`${finalLocation.name} on ${finalLocation.street} ${finalLocation.city}`}
                         key="end"
                     >
-                        <Image source={require("../../assets/house-icon.png")}
+                        <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
                             style={{ width: 40, height: 40 }}
                             resizeMethod="resize"
                         />
@@ -511,11 +507,11 @@ const styles = StyleSheet.create({
         height: "80%"
     },
     numberStyle: {
-        fontSize: Platform.OS === "ios" ? 15 : 13,
+        fontSize: Platform.OS === "ios" ? 14 : 13,
         fontWeight: 'bold'
     },
     textStyle: {
-        fontSize: Platform.OS === "ios" ? 15 : 13
+        fontSize: Platform.OS === "ios" ? 14 : 13
     },
     headerText: {
         fontSize: Platform.OS === "ios" ? 12 : 10,

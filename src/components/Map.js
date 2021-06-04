@@ -20,6 +20,7 @@ const Map = () => {
   const [isModalVisible, setModalVisible] = useState(false)
   const isFocused = useIsFocused()
   const [followsUserLocation, setFollowsUserLocation] = useState(false)
+  console.log(locations.length)
   useEffect(() => {
     const getPermission = async () => {
       const permission = await Location.getPermissionsAsync()
@@ -90,22 +91,6 @@ const Map = () => {
           followsUserLocation={followsUserLocation}
         >
           <PolylineComponent locations={locations}/>
-          {/* {locations && locations.map((location, key) => (
-            <Marker
-              coordinate={{
-                ...location.coords
-              }}
-              title={`Location ${key + 1}: This place's address is`}
-              description={`${location.coords.latitude} ${location.coords.longitude}`}
-              key={key}
-            >
-              <Image source={require("../../assets/map-marker.png")}
-                style={{ width: 40, height: 40 }}
-                resizeMode="center"
-                resizeMethod="resize"
-              />
-            </Marker>
-          ))} */}
 
           {markedLocations && markedLocations.map((location, key) => (
             <Marker

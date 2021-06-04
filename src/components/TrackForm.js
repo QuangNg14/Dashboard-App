@@ -65,7 +65,7 @@ const TrackForm = ({ navigation }) => {
     await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
       accuracy: Location.Accuracy.BestForNavigation,
       timeInterval: 5000, //update every second
-      distanceInterval: 10, //update every 10 meters,
+      distanceInterval: 50, //update every 10 meters,
       foregroundService: {
         notificationTitle: 'Using your location',
         notificationBody: 'To turn off, go back to the app and switch something off.',
@@ -256,14 +256,14 @@ const TrackForm = ({ navigation }) => {
               <TouchableOpacity style={styles.stopBtn} onPress={handleStopRecording}>
                 <Text style={{
                   fontWeight: "bold",
-                  fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)"
+                  fontSize: Platform.OS === "ios" ? 15 : 14, color: "rgb(255, 111, 97)"
                 }}>STOP</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.markBtn} onPress={handleMarkedLocation}>
                 <Text style={{
                   fontWeight: "bold",
-                  fontSize: Platform.OS === "ios" ? 16 : 14, color: "white"
+                  fontSize: Platform.OS === "ios" ? 15 : 14, color: "white"
                 }}>PIN</Text>
               </TouchableOpacity>
 
@@ -282,21 +282,21 @@ const TrackForm = ({ navigation }) => {
                   <TouchableOpacity style={styles.stopBtn} onPress={handleStartRecording}>
                     <Text style={{
                       fontWeight: "bold",
-                      fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)"
+                      fontSize: Platform.OS === "ios" ? 15 : 14, color: "rgb(255, 111, 97)"
                     }}>RESUME</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.markBtn} onPress={handleSave}>
                     <Text style={{
                       fontWeight: "bold",
-                      fontSize: Platform.OS === "ios" ? 16 : 14, color: "white"
+                      fontSize: Platform.OS === "ios" ? 15 : 14, color: "white"
                     }}>SAVE</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.cancelBtn} onPress={handleCancer}>
                     <Text style={{
                       fontWeight: "bold",
-                      fontSize: Platform.OS === "ios" ? 16 : 14, color: "rgb(255, 111, 97)"
+                      fontSize: Platform.OS === "ios" ? 15 : 14, color: "rgb(255, 111, 97)"
                     }}>CANCEL</Text>
                   </TouchableOpacity>
                 </View>
@@ -307,7 +307,7 @@ const TrackForm = ({ navigation }) => {
                   <TouchableOpacity style={styles.markBtn} onPress={handleStartRecording}>
                     <Text style={{
                       fontWeight: "bold",
-                      fontSize: Platform.OS === "ios" ? 16 : 14, color: "white"
+                      fontSize: Platform.OS === "ios" ? 15 : 14, color: "white"
                     }}>RECORD</Text>
                   </TouchableOpacity>
                 </View>

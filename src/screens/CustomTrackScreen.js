@@ -121,7 +121,6 @@ const CustomTrackScreen = ({ route, navigation }) => {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <MapView
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
         initialRegion={{
           ...initialLocation,
           latitudeDelta: 0.005,

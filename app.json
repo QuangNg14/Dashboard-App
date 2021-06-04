@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dashboard",
     "slug": "Dashboard",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/LogoDashboard.png",
     "splash": {
@@ -30,7 +30,7 @@
         ]
       },
       "bundleIdentifier": "com.quangnguyen140102app.dashboard",
-      "buildNumber": "1.9.0",
+      "buildNumber": "1.0.0",
       "config":{
         "googleMapsApiKey": "AIzaSyA9Oz9ZRwWHhIfcHZT9v3EHduhyQ9aXYJI"
       }

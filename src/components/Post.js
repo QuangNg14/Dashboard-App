@@ -265,7 +265,7 @@ const Post = (props) => {
                         description={`${firstLocation.name} on ${firstLocation.street} ${firstLocation.city}`}
                         key="start"
                     >
-                        <Image source={require("../../assets/house-icon.png")}
+                        <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
                             style={{ width: 40, height: 40 }}
                             resizeMethod="resize"
                         />
@@ -279,7 +279,7 @@ const Post = (props) => {
                         description={`${finalLocation.name} on ${finalLocation.street} ${finalLocation.city}`}
                         key="end"
                     >
-                        <Image source={require("../../assets/house-icon.png")}
+                        <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
                             style={{ width: 40, height: 40 }}
                             resizeMethod="resize"
                         />

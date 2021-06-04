@@ -78,7 +78,6 @@ const TrackDetailScreen = ({ navigation, route }) => {
     <>
       <MapView
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
         initialRegion={{
           ...initialLocation,
           latitudeDelta: 0.005,
@@ -105,7 +104,7 @@ const TrackDetailScreen = ({ navigation, route }) => {
             description={`${firstLocation && firstLocation.name} on ${firstLocation && firstLocation.street} ${firstLocation && firstLocation.city}`}
             key="start"
           >
-            <Image source={require("../../assets/house-icon.png")}
+            <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
               style={{ width: 40, height: 40 }}
               resizeMethod="resize"
             />
@@ -119,7 +118,7 @@ const TrackDetailScreen = ({ navigation, route }) => {
             description={`${finalLocation && finalLocation.name} on ${finalLocation && finalLocation.street} ${finalLocation && finalLocation.city}`}
             key="end"
           >
-            <Image source={require("../../assets/house-icon.png")}
+            <Image source={{uri: "https://smarttrain.edu.vn/assets/uploads/2017/10/678111-map-marker-512.png"}}
               style={{ width: 40, height: 40 }}
               resizeMethod="resize"
             />

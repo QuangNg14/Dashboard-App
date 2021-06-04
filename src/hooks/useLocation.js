@@ -1,9 +1,6 @@
 import { useState, useEffect, useContext, useRef } from "react"
 import { requestPermissionsAsync, watchPositionAsync, Accuracy, requestForegroundPermissionsAsync, requestBackgroundPermissionsAsync } from "expo-location"
 import * as Location from "expo-location"
-import * as Permissions from 'expo-permissions';
-import * as TaskManager from 'expo-task-manager';
-import { Context as LocationContext } from "../context/LocationContext"
 
 
 export default (isFocused, shouldTrack, callback) => {
@@ -29,8 +26,8 @@ export default (isFocused, shouldTrack, callback) => {
                     subscriber = await watchPositionAsync(
                         {
                             accuracy: Accuracy.BestForNavigation,
-                            timeInterval: 1000,
-                            distanceInterval: 1,
+                            timeInterval: 5000,
+                            distanceInterval: 30,
                         },
                         callback
                     );
