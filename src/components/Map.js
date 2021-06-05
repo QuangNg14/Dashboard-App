@@ -14,52 +14,47 @@ import PolylineComponent from './PolylineComponent';
 const Map = () => {
   const { state: { currentLocation, locations, isRecording,
     markedLocations, markedLocationsAddresses } } = useContext(LocationContext)
-  const [location, setLocation] = useState(null)
-  const [permission, setPermission] = useState(null)
-  const [status, setStatus] = useState("")
-  const [isModalVisible, setModalVisible] = useState(false)
-  const isFocused = useIsFocused()
+
   const [followsUserLocation, setFollowsUserLocation] = useState(false)
 
-  useEffect(() => {
-    const getPermission = async () => {
-      const permission = await Location.getPermissionsAsync()
-      setPermission(permission)
-    }
-    if (status) {
-      getPermission()
-    }
-  }, [status])
+  // useEffect(() => {
+  //   const getPermission = async () => {
+  //     const permission = await Location.getPermissionsAsync()
+  //     setPermission(permission)
+  //   }
+  //   if (status) {
+  //     getPermission()
+  //   }
+  // }, [status])
 
-  useEffect(() => {
-    if (permission) {
-      if (permission.status === "granted") {
-        const getCurrentLocation = async () => {
-          let location = await Location.getCurrentPositionAsync({
-            maxAge: 5000,
-            requiredAccuracy: 100,
-            accuracy: Location.Accuracy.Balanced
-          });
-          setLocation(location);
-        }
-        getCurrentLocation()
-      }
-    }
-  }, [permission, isFocused]);
+  // useEffect(() => {
+  //   if (permission) {
+  //     if (permission.status === "granted") {
+  //       const getCurrentLocation = async () => {
+  //         let location = await Location.getCurrentPositionAsync({
+  //           maxAge: 5000,
+  //           requiredAccuracy: 100,
+  //           accuracy: Location.Accuracy.Balanced
+  //         });
+  //         setLocation(location);
+  //       }
+  //       getCurrentLocation()
+  //     }
+  //   }
+  // }, [permission, isFocused, status]);
 
-  useEffect(() => {
-    const reqPermission = async () => {
-      const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-        alert('We are using your location to display your training routes on the map. Please turn on location services for the application');
-        throw new Error('Location permission not granted');
-      }
-      setStatus(status)
-    }
-    reqPermission()
-  }, [])
+  // useEffect(() => {
+  //   const reqPermission = async () => {
+  //     const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+  //     if (status !== 'granted') {
+  //       alert('We are using your location to display your training routes on the map. Please turn on location services for the application');
+  //       throw new Error('Location permission not granted');
+  //     }
+  //   }
+  //   reqPermission()
+  // }, [])
 
-  if (!location) {
+  if (!currentLocation) {
     return <ActivityIndicator size="large" style={{ marginTop: 200 }} />
   }
   return (
@@ -67,8 +62,8 @@ const Map = () => {
         <MapView
           // provider={PROVIDER_GOOGLE}
           style={{ height: isRecording ? "50%" : "80%", flex: 1 }}
-          initialRegion={location && {
-            ...location.coords,
+          initialRegion={currentLocation && {
+            ...currentLocation.coords,
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
           }}

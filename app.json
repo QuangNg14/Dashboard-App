@@ -30,7 +30,7 @@
         ]
       },
       "bundleIdentifier": "com.quangnguyen140102app.dashboard",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.1.0",
       "config":{
         "googleMapsApiKey": "AIzaSyA9Oz9ZRwWHhIfcHZT9v3EHduhyQ9aXYJI"
       }

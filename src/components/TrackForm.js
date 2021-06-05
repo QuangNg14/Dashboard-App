@@ -45,7 +45,7 @@ const TrackForm = ({ navigation }) => {
     };
   }, []);
 
-  const _handleAppStateChange = (nextAppState) => {
+  const _handleAppStateChange = async (nextAppState) => {
     if (
       appState.current.match(/inactive|background/) &&
       nextAppState === 'active'
@@ -54,6 +54,10 @@ const TrackForm = ({ navigation }) => {
     }
     else{
       console.log("App has come to the background")
+      let res = await Permissions.askAsync(Permissions.LOCATION);
+      if (res.status !== 'granted') {
+        console.log('Permission to access location was denied');
+      } 
     }
 
     appState.current = nextAppState;
@@ -62,6 +66,10 @@ const TrackForm = ({ navigation }) => {
 
   const subscriber = React.useRef();
   const startLocationTracking = React.useCallback(async () => {
+    let res = await Permissions.askAsync(Permissions.LOCATION);
+    if (res.status !== 'granted') {
+      console.log('Permission to access location was denied');
+    } 
     await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
       accuracy: Location.Accuracy.BestForNavigation,
       timeInterval: 3000, //update every second
@@ -81,10 +89,12 @@ const TrackForm = ({ navigation }) => {
 
   useEffect(() => {
     const config = async () => {
-      let res = await Permissions.askAsync(Permissions.LOCATION);
-      if (res.status !== 'granted') {
-        console.log('Permission to access location was denied');
-      } 
+      if(appStateVisible !== "active"){
+        let res = await Permissions.askAsync(Permissions.LOCATION);
+        if (res.status !== 'granted') {
+          console.log('Permission to access location was denied');
+        } 
+      }
     };
     config();
   }, []);
@@ -463,8 +473,8 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
     let long = locations[0].coords.longitude;
     DeviceEventEmitter.emit('callback', locations[0])
 
-    // console.log(
-    //   `${new Date(Date.now()).toLocaleString()}: ${lat},${long}`
-    // );
+    console.log(
+      `${new Date(Date.now()).toLocaleString()}: ${lat},${long}`
+    );
   }
 });

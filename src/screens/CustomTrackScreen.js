@@ -62,7 +62,6 @@ const CustomTrackScreen = ({ route, navigation }) => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {
-        console.log("hello")
         setKeyboardVisible(true); // or some other action
       }
     );
@@ -98,7 +97,6 @@ const CustomTrackScreen = ({ route, navigation }) => {
       method: 'POST',
     }).then(async r => {
       let data = await r.json()
-      console.log(data.url)
       setImage(data.url);
       setLoading(false)
     }).catch(err => console.log(err))
